@@ -1,16 +1,22 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as eks from 'aws-cdk-lib/aws-eks';
 
 export class PlaneStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, cluster: eks.Cluster, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
-
-    // example resource
-    // const queue = new sqs.Queue(this, 'PlaneQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    cluster.addHelmChart('MyPlaneChart', {
+      chart: 'plane-ce',
+      release: 'my-plane',
+      repository: 'https://helm.plane.so',
+      namespace: 'plane-ns',
+      createNamespace: true,
+      values: {
+        ingress: {
+          host: 'plane.example.com',
+        },
+      },
+    });
   }
 }
