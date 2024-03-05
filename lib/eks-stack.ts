@@ -44,7 +44,42 @@ export class EksClusterStack extends cdk.Stack {
       instanceTypes: [new ec2.InstanceType('m5.xlarge')],
       nodeRole: nodeRole,
     });
-  
-  }
+
     
+    this.cluster.addHelmChart('AWSLoadBalancerController', {
+      chart: 'aws-load-balancer-controller',
+      repository: 'https://aws.github.io/eks-charts',
+      namespace: 'kube-system',
+      release: 'aws-load-balancer-controller',
+      values: {
+        clusterName: this.cluster.clusterName,
+        region: this.region,
+        vpcId: this.cluster.vpc.vpcId,
+        serviceAccount: {
+          create: true,
+          name: 'aws-load-balancer-controller',
+        },
+      },
+    });
+
+    this.cluster.addHelmChart('NginxIngress', {
+      chart: 'nginx-ingress',
+      release: 'nginx-ingress',
+      repository: 'https://helm.nginx.com/stable',
+      namespace: 'kube-system',
+      values: {
+        controller:{
+          service: {
+            annotations: {
+              "service.beta.kubernetes.io/aws-load-balancer-scheme": "internal",
+              "service.beta.kubernetes.io/aws-load-balancer-type": "nlb"
+            }
+          }
+        }
+      }
+    });     
+
+
+
+  }    
 }
