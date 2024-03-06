@@ -16,6 +16,13 @@ export class PlaneStack extends cdk.Stack {
         ingress: {
           host: 'plane.example.com',
         },
+        dockerhub: {
+          images:{
+            backend: "ghcr.io/torbenraab/plane/plane-backend",
+            space: "ghcr.io/torbenraab/plane/plane-space",
+            frontend: "ghcr.io/torbenraab/plane/plane-frontend",
+          }
+        }
       },
     });
   }
