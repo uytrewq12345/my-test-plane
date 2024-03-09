@@ -1,10 +1,29 @@
-import fetch from 'node-fetch';
-import { writeFile } from 'fs/promises';
+import * as fs from 'fs';
+import * as yaml from 'js-yaml';
 
-export async function downloadFile(url: string, outputPath: string): Promise<void> {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`Error: ${response.statusText}`);
-  const data = await response.buffer();
-  await writeFile(outputPath, data);
-  console.log(`File has been downloaded and saved to ${outputPath}`);
+export function convertYamlToJson(yamlFilePath: string): any {
+  const yamlFile = fs.readFileSync(yamlFilePath, 'utf8');
+  const jsonObject = yaml.load(yamlFile);
+  return jsonObject;
+}
+
+
+import { DatabaseCluster, } from 'aws-cdk-lib/aws-rds';
+
+export function getDBConnectionURL(database: DatabaseCluster): string {
+  const username = database.secret?.secretValueFromJson('username').unsafeUnwrap();
+  const password = database.secret?.secretValueFromJson('password').unsafeUnwrap();
+  const hostname = database.secret?.secretValueFromJson('hostname').unsafeUnwrap();
+  const dbname = database.secret?.secretValueFromJson('dbname').unsafeUnwrap();
+
+  let engine = 'Unknown';
+  if (database.engine?.engineFamily === 'MYSQL') {
+    engine = 'mysql' 
+  } else if (database.engine?.engineFamily === 'POSTGRESQL') {
+    engine = 'postgres' 
+  } else {
+    console.log(database.engine)
+    throw new Error('Unsupported database engine at getDBConnectionURL');
+  }
+  return `${engine}://${username}:${password}@${hostname}/${dbname}`;
 }
