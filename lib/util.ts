@@ -15,15 +15,8 @@ export function getDBConnectionURL(database: DatabaseCluster): string {
   const password = database.secret?.secretValueFromJson('password').unsafeUnwrap();
   const hostname = database.secret?.secretValueFromJson('hostname').unsafeUnwrap();
   const dbname = database.secret?.secretValueFromJson('dbname').unsafeUnwrap();
-
-  let engine = 'Unknown';
-  if (database.engine?.engineFamily === 'MYSQL') {
-    engine = 'mysql' 
-  } else if (database.engine?.engineFamily === 'POSTGRESQL') {
-    engine = 'postgres' 
-  } else {
-    console.log(database.engine)
-    throw new Error('Unsupported database engine at getDBConnectionURL');
-  }
-  return `${engine}://${username}:${password}@${hostname}/${dbname}`;
+  const port = database.secret?.secretValueFromJson('port').unsafeUnwrap();
+  const engine = database.secret?.secretValueFromJson('engine').unsafeUnwrap();
+  
+  return `postgres://${username}:${password}@${hostname}:${port}/${dbname}`;
 }

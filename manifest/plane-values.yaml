@@ -1,5 +1,5 @@
 ingress:
-  host: 'plane.example.com'
+  appHost: 'localhost'
 
 dockerhub:
   images:
@@ -10,6 +10,10 @@ dockerhub:
 postgres:
   local_setup: true
 
+minio:
+  local_setup: true
+
 env:
-  pgdb_remote_url:  
+  pgdb_remote_url: 
+  hoge: 
 

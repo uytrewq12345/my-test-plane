@@ -30,7 +30,7 @@ nginxIngressStack.addDependency(awsLoadBalancerControllerStack);
 */
 
 // ExternalSecret スタック
-const externalSecretStack = new ExternalSecretStack(app, 'ExternalSecretStack', eksClusterStack.cluster)
+// const externalSecretStack = new ExternalSecretStack(app, 'ExternalSecretStack', eksClusterStack.cluster)
 
 // Longhorn スタック
 const longhornStack = new LonghornStack(app, 'LonghornStack', eksClusterStack.cluster); 

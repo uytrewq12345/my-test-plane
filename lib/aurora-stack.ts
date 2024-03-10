@@ -3,8 +3,6 @@ import { Construct } from 'constructs';
 import * as eks from 'aws-cdk-lib/aws-eks';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { planeDBSecretStoreYaml, planeDBExternalSecretYaml, planeDBServiceAccount, planeNameSpace } from '../config/config';
-import { convertYamlToJson } from './util';
 
 export class AuroraStack extends cdk.Stack {
   public readonly auroraDB: rds.DatabaseCluster;
